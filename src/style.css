@@ -1,19 +1,52 @@
-*
-{
-    margin: 0;
-    padding: 0;
+@import url("https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  color: white;
 }
 
 html,
-body
-{
-    overflow: hidden;
+body {
+  /* overflow: hidden; */
 }
 
-.webgl
-{
-    position: fixed;
-    top: 0;
-    left: 0;
-    outline: none;
+body {
+  background-color: black;
+}
+
+.webgl {
+  position: fixed;
+  top: 0;
+  left: 0;
+  outline: none;
+  z-index: -5;
+}
+
+.loading {
+  width: 100vw;
+  height: 100vh;
+  z-index: 5;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: black;
+  color: white;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: "Space Mono", monospace;
+}
+
+#home {
+  height: 80vh;
+  width: 100vw;
+  text-align: center;
+  font-family: "Space Mono", monospace;
+  font-size: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 4;
 }

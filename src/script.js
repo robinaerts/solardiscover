@@ -3,8 +3,19 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 const canvas = document.querySelector("canvas.webgl");
+const loading = document.querySelector(".loading");
 
-const textureLoader = new THREE.TextureLoader();
+const loadingManager = new THREE.LoadingManager();
+const textureLoader = new THREE.TextureLoader(loadingManager);
+
+loadingManager.onStart = () => {
+  loading.style.display = "flex";
+  console.log("started");
+};
+
+loadingManager.onLoad = () => {
+  loading.style.display = "none";
+};
 
 const sunTexture = textureLoader.load("/textures/2k_sun.jpg");
 const mercuryTexture = textureLoader.load("/textures/2k_mercury.jpg");
@@ -21,6 +32,16 @@ const starTexture = textureLoader.load("/textures/2k_stars.jpg");
 // Scene
 const scene = new THREE.Scene();
 scene.background = starTexture;
+
+const cursor = {
+  x: 0,
+  y: 0,
+};
+
+window.addEventListener("mousemove", (e) => {
+  cursor.x = e.clientX / sizes.width - 0.5;
+  cursor.y = e.clientY / sizes.height - 0.5;
+});
 
 const sizes = {
   width: window.innerWidth,
@@ -41,20 +62,46 @@ window.addEventListener("resize", () => {
 });
 
 // Camera
+const cameraGroup = new THREE.Group();
+
 const camera = new THREE.PerspectiveCamera(
-  75,
+  20,
   sizes.width / sizes.height,
   0.1,
-  100
+  1000
 );
-camera.position.x = 5;
-camera.position.y = 1;
-camera.position.z = 5;
-scene.add(camera);
+
+camera.position.set(28.5, 5, 145.5);
+scene.add(cameraGroup);
+cameraGroup.add(camera);
 
 // Controls
-const controls = new OrbitControls(camera, canvas);
-controls.enableDamping = true;
+// const controls = new OrbitControls(camera, canvas);
+// controls.enableDamping = true;
+
+// Stars
+
+// const starCount = 2000;
+// const starPositions = new Float32Array(starCount * 3);
+// const starGeometry = new THREE.BufferGeometry();
+
+// for (let i = 0; i < starCount; i++) {
+//   starPositions[i] = (Math.random() - 0.5) * 1000;
+//   starPositions[i * 3 + 1] = (Math.random() - 0.5) * 1000;
+//   starPositions[i * 3 + 2] = (Math.random() - 0.5) * 1000;
+// }
+
+// starGeometry.setAttribute(
+//   "position",
+//   new THREE.BufferAttribute(starPositions, 3)
+// );
+
+// const stars = new THREE.Points(
+//   starGeometry,
+//   new THREE.PointsMaterial({ color: 0xffffff })
+// );
+
+// scene.add(stars);
 
 // Planets
 
@@ -62,10 +109,10 @@ const divideRadiusBy = 15000;
 
 const planetRadius = {
   sun: 696350 / divideRadiusBy,
-  mercury: 2439.7 / divideRadiusBy,
-  venus: 6052 / divideRadiusBy,
-  earth: 6371 / divideRadiusBy,
-  mars: 3389.5 / divideRadiusBy,
+  mercury: (2 * 2439.7) / divideRadiusBy,
+  venus: (2 * 6052) / divideRadiusBy,
+  earth: (2 * 6371) / divideRadiusBy,
+  mars: (2 * 3389.5) / divideRadiusBy,
   jupiter: 69910 / divideRadiusBy,
   saturn: 58230 / divideRadiusBy,
   uranus: 25362 / divideRadiusBy,
@@ -127,25 +174,26 @@ const neptune = new THREE.Mesh(
 );
 
 sun.position.x = distanceFromSun.sun;
-mercury.position.x = distanceFromSun.mercury;
-venus.position.x = distanceFromSun.venus;
-earth.position.x = distanceFromSun.earth;
-mars.position.x = distanceFromSun.mars;
-jupiter.position.x = distanceFromSun.jupiter;
-saturn.position.x = distanceFromSun.saturn;
-uranus.position.x = distanceFromSun.uranus;
-neptune.position.x = distanceFromSun.neptune;
+mercury.position.x = 10;
+venus.position.x = 10 * 2;
+earth.position.x = 10 * 3;
+mars.position.x = 10 * 4;
+jupiter.position.x = 10 * 5;
+saturn.position.x = 10 * 6;
+uranus.position.x = 10 * 7;
+neptune.position.x = 10 * 8;
 
-scene.add(sun, mercury, venus, earth, mars, jupiter, saturn, uranus);
-
-const axesHelper = new THREE.AxesHelper(200);
-scene.add(axesHelper);
+scene.add(sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune);
 
 // Lights
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
 scene.add(ambientLight);
 
+const pointLight = new THREE.PointLight(0xffffff, 1);
+
+pointLight.position.x = -planetRadius.sun;
+scene.add(pointLight);
 // Renderer
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
@@ -163,8 +211,17 @@ const tick = () => {
   const deltaTime = elapsedTime - lastElapsedTime;
   lastElapsedTime = elapsedTime;
 
-  // Update controls
-  controls.update();
+  // Update Camera
+
+  const parallaxX = cursor.x;
+  const parallaxY = -cursor.y;
+
+  cameraGroup.position.x +=
+    (parallaxX - cameraGroup.position.x) * 15 * deltaTime;
+  cameraGroup.position.y +=
+    (parallaxY - cameraGroup.position.y) * 15 * deltaTime;
+
+  // controls.update(); // Update controls
 
   // Render
   renderer.render(scene, camera);
