@@ -1,9 +1,11 @@
 import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import gsap from "gsap";
 
 const canvas = document.querySelector("canvas.webgl");
 const loading = document.querySelector(".loading");
+const loadingBar = document.querySelector(".loading-bar");
 
 const loadingManager = new THREE.LoadingManager();
 const textureLoader = new THREE.TextureLoader(loadingManager);
@@ -11,6 +13,11 @@ const textureLoader = new THREE.TextureLoader(loadingManager);
 loadingManager.onStart = () => {
   loading.style.display = "flex";
   console.log("started");
+};
+
+loadingManager.onProgress = (item, loaded, total) => {
+  const percentage = `${(loaded / total) * 100}%`;
+  loadingBar.style.transform = `scaleX(${percentage})`;
 };
 
 loadingManager.onLoad = () => {
@@ -74,6 +81,22 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.set(28.5, 5, 145.5);
 scene.add(cameraGroup);
 cameraGroup.add(camera);
+
+let scroll;
+const moveCamera = gsap.to(camera.position, {
+  x: 50,
+  y: 50,
+  paused: true,
+  duration: 50,
+});
+
+window.addEventListener("scroll", () => {
+  scroll = window.scrollY / sizes.height;
+  if (scroll > 0.8) {
+    moveCamera.progress(scroll / 0.8);
+    console.log(moveCamera.progress());
+  }
+});
 
 // Controls
 // const controls = new OrbitControls(camera, canvas);
