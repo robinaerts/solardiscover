@@ -6,6 +6,9 @@ import gsap from "gsap";
 const canvas = document.querySelector("canvas.webgl");
 const loading = document.querySelector(".loading");
 const loadingBar = document.querySelector(".loading-bar");
+const innerCursor = document.querySelector(".cursor-inner");
+const outerCursor = document.querySelector(".cursor-outer");
+const hoverItems = document.getElementsByClassName("hover-text");
 
 const loadingManager = new THREE.LoadingManager();
 const textureLoader = new THREE.TextureLoader(loadingManager);
@@ -40,6 +43,25 @@ const starTexture = textureLoader.load("/textures/2k_stars.jpg");
 const scene = new THREE.Scene();
 scene.background = starTexture;
 
+// Custom Cursor
+
+for (const item of hoverItems) {
+  item.onmouseover = () => {
+    innerCursor.style.opacity = "0";
+    outerCursor.style.background = "white";
+    outerCursor.style.width = "90px";
+    outerCursor.style.height = "90px";
+    outerCursor.style.mixBlendMode = "difference";
+  };
+  item.onmouseleave = () => {
+    innerCursor.style.opacity = "100%";
+    outerCursor.style.background = "none";
+    outerCursor.style.width = "50px";
+    outerCursor.style.height = "50px";
+    outerCursor.style.mixBlendMode = "normal";
+  };
+}
+
 const cursor = {
   x: 0,
   y: 0,
@@ -48,6 +70,13 @@ const cursor = {
 window.addEventListener("mousemove", (e) => {
   cursor.x = e.clientX / sizes.width - 0.5;
   cursor.y = e.clientY / sizes.height - 0.5;
+
+  // Custom Cursor
+  innerCursor.style.top = e.clientY + "px";
+  innerCursor.style.left = e.clientX + "px";
+
+  outerCursor.style.top = e.clientY + "px";
+  outerCursor.style.left = e.clientX + "px";
 });
 
 const sizes = {
