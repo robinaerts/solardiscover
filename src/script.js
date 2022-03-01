@@ -10,6 +10,8 @@ const innerCursor = document.querySelector(".cursor-inner");
 const outerCursor = document.querySelector(".cursor-outer");
 const hoverItems = document.getElementsByClassName("hover-text");
 
+const domRotatingPlanets = document.querySelector("#rotating-planets-text");
+
 const loadingManager = new THREE.LoadingManager();
 const textureLoader = new THREE.TextureLoader(loadingManager);
 
@@ -107,23 +109,26 @@ const camera = new THREE.PerspectiveCamera(
   1000
 );
 
-camera.position.set(28.5, 5, 145.5);
+const startX = 28.5;
+const startY = 5;
+const startZ = 145.5;
+
+camera.position.set(startX, startY, startZ);
 scene.add(cameraGroup);
 cameraGroup.add(camera);
 
 let scroll;
-const moveCamera = gsap.to(camera.position, {
-  x: 50,
-  y: 50,
-  paused: true,
-  duration: 50,
-});
 
 window.addEventListener("scroll", () => {
   scroll = window.scrollY / sizes.height;
-  if (scroll > 0.8) {
-    moveCamera.progress(scroll / 0.8);
-    console.log(moveCamera.progress());
+  camera.position.z = startZ + scroll * 10;
+  camera.position.x = startX - scroll * 10;
+  camera.position.y = startY + scroll * 10;
+  camera.rotation.x = scroll * 1;
+  if (scroll > 1) {
+    domRotatingPlanets.style.position = "fixed";
+  } else {
+    domRotatingPlanets.style.position = "relative";
   }
 });
 

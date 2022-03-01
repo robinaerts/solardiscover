@@ -65,11 +65,18 @@ body {
 }
 
 #rotating-planets {
-  height: 100vh;
+  position: absolute;
+  z-index: 5;
+  height: 300vh;
   width: 100vw;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+}
+
+#rotating-planets-text {
+  top: 20vh;
+  z-index: 5;
 }
 
 .cursor-outer,
