@@ -2,6 +2,10 @@ import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import gsap from "gsap";
+import * as dat from "dat.gui";
+
+const gui = new dat.GUI();
+const cameraDebug = gui.addFolder("Camera");
 
 const canvas = document.querySelector("canvas.webgl");
 const loading = document.querySelector(".loading");
@@ -113,6 +117,13 @@ const startX = 28.5;
 const startY = 5;
 const startZ = 145.5;
 
+cameraDebug.add(camera.position, "x").min(-100).max(100).step(1);
+cameraDebug.add(camera.position, "y").min(-100).max(100).step(1);
+cameraDebug.add(camera.position, "z").min(-100).max(1000).step(1);
+cameraDebug.add(camera.rotation, "x").min(-2000).max(2000).step(0.01);
+cameraDebug.add(camera.rotation, "y").min(-2000).max(2000).step(0.01);
+cameraDebug.add(camera.rotation, "z").min(-2000).max(2000).step(0.01);
+
 camera.position.set(startX, startY, startZ);
 scene.add(cameraGroup);
 cameraGroup.add(camera);
@@ -121,10 +132,14 @@ let scroll;
 
 window.addEventListener("scroll", () => {
   scroll = window.scrollY / sizes.height;
-  camera.position.z = startZ + scroll * 10;
-  camera.position.x = startX - scroll * 10;
-  camera.position.y = startY + scroll * 10;
-  camera.rotation.x = scroll * 1;
+  if (scroll < 1) {
+    camera.position.z = startZ + scroll * 100;
+    camera.position.x = startX - scroll * 100;
+    camera.position.y = startY + scroll * 500;
+    camera.lookAt(earth.position);
+    // jupiter.position.x = Math.cos(Math.PI * scroll * 1);
+    // jupiter.position.z = Math.sin(Math.PI * scroll);
+  }
   if (scroll > 1) {
     domRotatingPlanets.style.position = "fixed";
   } else {
