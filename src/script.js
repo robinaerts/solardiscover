@@ -133,12 +133,13 @@ let scroll;
 window.addEventListener("scroll", () => {
   scroll = window.scrollY / sizes.height;
   if (scroll < 1) {
-    camera.position.z = startZ + scroll * 100;
-    camera.position.x = startX - scroll * 100;
+    camera.position.z = startZ + scroll * 500;
+    camera.position.x = startX - scroll * 500;
     camera.position.y = startY + scroll * 500;
-    camera.lookAt(earth.position);
-    // jupiter.position.x = Math.cos(Math.PI * scroll * 1);
-    // jupiter.position.z = Math.sin(Math.PI * scroll);
+    camera.lookAt(originalEarthPosition);
+  }
+  if (scroll < 1.5) {
+    orbitPlanetsAroundSun();
   }
   if (scroll > 1) {
     domRotatingPlanets.style.position = "fixed";
@@ -146,6 +147,20 @@ window.addEventListener("scroll", () => {
     domRotatingPlanets.style.position = "relative";
   }
 });
+
+const orbitPlanetsAroundSun = () => {
+  mercuryParent.rotation.y = ((scroll * 8) / 2) * Math.PI;
+  venusParent.rotation.y = ((scroll * 7) / 2) * Math.PI;
+  earthParent.rotation.y = ((scroll * 6) / 2) * Math.PI;
+  marsParent.rotation.y = ((scroll * 5) / 2) * Math.PI;
+  jupiterParent.rotation.y = ((scroll * 4) / 2) * Math.PI;
+  saturnParent.rotation.y = ((scroll * 3) / 2) * Math.PI;
+  uranusParent.rotation.y = ((scroll * 2) / 2) * Math.PI;
+  neptuneParent.rotation.y = ((scroll * 1) / 2) * Math.PI;
+};
+
+// const axesHelper = new THREE.AxesHelper(200, 200);
+// scene.add(axesHelper);
 
 // Controls
 // const controls = new OrbitControls(camera, canvas);
@@ -193,15 +208,44 @@ const planetRadius = {
 
 const distanceFromSun = {
   sun: -planetRadius.sun,
-  mercury: (57.91 * Math.pow(10, 6)) / divideRadiusBy / 3000,
-  venus: (108.2 * Math.pow(10, 6)) / divideRadiusBy / 3000,
-  earth: (149.6 * Math.pow(10, 6)) / divideRadiusBy / 3000,
-  mars: (227.9 * Math.pow(10, 6)) / divideRadiusBy / 3000,
-  jupiter: (778.5 * Math.pow(10, 6)) / divideRadiusBy / 3000,
-  saturn: (1.434 * Math.pow(10, 9)) / divideRadiusBy / 3000,
-  uranus: (2.871 * Math.pow(10, 9)) / divideRadiusBy / 3000,
-  neptune: (4.495 * Math.pow(10, 9)) / divideRadiusBy / 3000,
+  mercury: planetRadius.sun + (57.91 * Math.pow(10, 6)) / divideRadiusBy / 3000,
+  venus: planetRadius.sun + (108.2 * Math.pow(10, 6)) / divideRadiusBy / 3000,
+  earth: planetRadius.sun + (149.6 * Math.pow(10, 6)) / divideRadiusBy / 3000,
+  mars: planetRadius.sun + (227.9 * Math.pow(10, 6)) / divideRadiusBy / 3000,
+  jupiter: planetRadius.sun + (778.5 * Math.pow(10, 6)) / divideRadiusBy / 3000,
+  saturn: planetRadius.sun + (1.434 * Math.pow(10, 9)) / divideRadiusBy / 3000,
+  uranus: planetRadius.sun + (2.871 * Math.pow(10, 9)) / divideRadiusBy / 3000,
+  neptune: planetRadius.sun + (4.495 * Math.pow(10, 9)) / divideRadiusBy / 3000,
 };
+
+const mercuryParent = new THREE.Object3D();
+const venusParent = new THREE.Object3D();
+const earthParent = new THREE.Object3D();
+const marsParent = new THREE.Object3D();
+const jupiterParent = new THREE.Object3D();
+const saturnParent = new THREE.Object3D();
+const uranusParent = new THREE.Object3D();
+const neptuneParent = new THREE.Object3D();
+
+mercuryParent.position.x = distanceFromSun.sun;
+venusParent.position.x = distanceFromSun.sun;
+earthParent.position.x = distanceFromSun.sun;
+marsParent.position.x = distanceFromSun.sun;
+jupiterParent.position.x = distanceFromSun.sun;
+saturnParent.position.x = distanceFromSun.sun;
+uranusParent.position.x = distanceFromSun.sun;
+neptuneParent.position.x = distanceFromSun.sun;
+
+scene.add(
+  mercuryParent,
+  venusParent,
+  earthParent,
+  marsParent,
+  jupiterParent,
+  saturnParent,
+  uranusParent,
+  neptuneParent
+);
 
 const sun = new THREE.Mesh(
   new THREE.SphereBufferGeometry(planetRadius.sun, 32, 32),
@@ -246,16 +290,29 @@ const neptune = new THREE.Mesh(
 );
 
 sun.position.x = distanceFromSun.sun;
-mercury.position.x = 10;
-venus.position.x = 10 * 2;
-earth.position.x = 10 * 3;
-mars.position.x = 10 * 4;
-jupiter.position.x = 10 * 5;
-saturn.position.x = 10 * 6;
-uranus.position.x = 10 * 7;
-neptune.position.x = 10 * 8;
+mercury.position.x = 10 + planetRadius.sun;
+venus.position.x = 10 * 2 + planetRadius.sun;
+earth.position.x = 10 * 3 + planetRadius.sun;
+mars.position.x = 10 * 4 + planetRadius.sun;
+jupiter.position.x = 10 * 5 + planetRadius.sun;
+saturn.position.x = 10 * 6 + planetRadius.sun;
+uranus.position.x = 10 * 7 + planetRadius.sun;
+neptune.position.x = 10 * 8 + planetRadius.sun;
 
-scene.add(sun, mercury, venus, earth, mars, jupiter, saturn, uranus, neptune);
+const originalEarthPosition = new THREE.Vector3(planetRadius.sun - 20, 0, 0);
+
+mercuryParent.add(mercury);
+venusParent.add(venus);
+earthParent.add(earth);
+marsParent.add(mars);
+jupiterParent.add(jupiter);
+saturnParent.add(saturn);
+uranusParent.add(uranus);
+neptuneParent.add(neptune);
+
+scene.add(sun);
+
+camera.lookAt(originalEarthPosition);
 
 // Lights
 
@@ -294,6 +351,17 @@ const tick = () => {
     (parallaxY - cameraGroup.position.y) * 15 * deltaTime;
 
   // controls.update(); // Update controls
+
+  //
+  sun.rotation.y = elapsedTime / 15;
+  mercury.rotation.y = elapsedTime / 5;
+  mars.rotation.y = elapsedTime / 5;
+  earth.rotation.y = elapsedTime / 5;
+  venus.rotation.y = elapsedTime / 5;
+  jupiter.rotation.y = elapsedTime / 5;
+  uranus.rotation.y = elapsedTime / 5;
+  neptune.rotation.y = elapsedTime / 5;
+  saturn.rotation.y = elapsedTime / 5;
 
   // Render
   renderer.render(scene, camera);
