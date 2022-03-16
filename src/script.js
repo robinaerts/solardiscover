@@ -139,24 +139,47 @@ window.addEventListener("scroll", () => {
     camera.lookAt(originalEarthPosition);
   }
   if (scroll < 1.5) {
-    orbitPlanetsAroundSun();
+    if (scroll > 1) {
+      camera.position.z = startZ + 1 * 500;
+      camera.position.x = startX - 1 * 500;
+      camera.position.y = startY + 1 * 500;
+      camera.lookAt(originalEarthPosition);
+    }
+    orbitPlanetsAroundSun(scroll);
   }
-  if (scroll > 1) {
-    domRotatingPlanets.style.position = "fixed";
-  } else {
-    domRotatingPlanets.style.position = "relative";
+  if (Math.round(scroll - 0.5) === 1) {
+    camera.position.x = startX;
+    camera.position.y = startY;
+    camera.position.z = startZ;
+    orbitPlanetsAroundSun(0);
+    camera.lookAt(originalEarthPosition);
   }
+
+  if (scroll > 1.5 && scroll < 2.9) {
+    const sectionScroll = scroll - 1.5;
+    camera.position.z = startZ - sectionScroll * 100;
+    camera.position.y = startY - sectionScroll * 3.3;
+    camera.position.x = startX - sectionScroll * 13;
+  }
+
+  if (scroll > 1.5)
+    if (scroll > 1 && scroll < 1.5) {
+      domRotatingPlanets.style.position = "fixed";
+    } else {
+      domRotatingPlanets.style.position = "relative";
+    }
+  console.log(scroll);
 });
 
-const orbitPlanetsAroundSun = () => {
-  mercuryParent.rotation.y = ((scroll * 8) / 2) * Math.PI;
-  venusParent.rotation.y = ((scroll * 7) / 2) * Math.PI;
-  earthParent.rotation.y = ((scroll * 6) / 2) * Math.PI;
-  marsParent.rotation.y = ((scroll * 5) / 2) * Math.PI;
-  jupiterParent.rotation.y = ((scroll * 4) / 2) * Math.PI;
-  saturnParent.rotation.y = ((scroll * 3) / 2) * Math.PI;
-  uranusParent.rotation.y = ((scroll * 2) / 2) * Math.PI;
-  neptuneParent.rotation.y = ((scroll * 1) / 2) * Math.PI;
+const orbitPlanetsAroundSun = (rotationScroll) => {
+  mercuryParent.rotation.y = ((rotationScroll * 8) / 2) * Math.PI;
+  venusParent.rotation.y = ((rotationScroll * 7) / 2) * Math.PI;
+  earthParent.rotation.y = ((rotationScroll * 6) / 2) * Math.PI;
+  marsParent.rotation.y = ((rotationScroll * 5) / 2) * Math.PI;
+  jupiterParent.rotation.y = ((rotationScroll * 4) / 2) * Math.PI;
+  saturnParent.rotation.y = ((rotationScroll * 3) / 2) * Math.PI;
+  uranusParent.rotation.y = ((rotationScroll * 2) / 2) * Math.PI;
+  neptuneParent.rotation.y = ((rotationScroll * 1) / 2) * Math.PI;
 };
 
 // const axesHelper = new THREE.AxesHelper(200, 200);
