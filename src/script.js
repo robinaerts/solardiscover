@@ -7,6 +7,7 @@ import * as dat from "dat.gui";
 const gui = new dat.GUI();
 const cameraDebug = gui.addFolder("Camera");
 
+// DOM ELEMENTS
 const canvas = document.querySelector("canvas.webgl");
 const loading = document.querySelector(".loading");
 const loadingBar = document.querySelector(".loading-bar");
@@ -15,6 +16,11 @@ const outerCursor = document.querySelector(".cursor-outer");
 const hoverItems = document.getElementsByClassName("hover-text");
 
 const domRotatingPlanets = document.querySelector("#rotating-planets-text");
+const domGroupPlanets = document.querySelector("#group-planets");
+
+const terrPlanets = document.querySelector("#terr-planets");
+const gasGiants = document.querySelector("#gas-giants");
+const iceGiants = document.querySelector("#ice-giants");
 
 const loadingManager = new THREE.LoadingManager();
 const textureLoader = new THREE.TextureLoader(loadingManager);
@@ -155,19 +161,27 @@ window.addEventListener("scroll", () => {
     camera.lookAt(originalEarthPosition);
   }
 
-  if (scroll > 1.5 && scroll < 2.9) {
-    const sectionScroll = scroll - 1.5;
+  if (scroll > 3.5 && scroll < 4.9) {
+    const sectionScroll = scroll - 3.5;
     camera.position.z = startZ - sectionScroll * 100;
     camera.position.y = startY - sectionScroll * 3.3;
     camera.position.x = startX - sectionScroll * 13;
   }
 
-  if (scroll > 1.5)
-    if (scroll > 1 && scroll < 1.5) {
-      domRotatingPlanets.style.position = "fixed";
-    } else {
-      domRotatingPlanets.style.position = "relative";
-    }
+  if (scroll > 1.9 && scroll < 3.5) {
+    terrPlanets.style.opacity = (scroll - 1.9) * 80 + "%";
+    gasGiants.style.opacity = (scroll - 1.9) * 80 + "%";
+    iceGiants.style.opacity = (scroll - 1.9) * 80 + "%";
+    domGroupPlanets.style.position = "fixed";
+  } else {
+    domGroupPlanets.style.position = "relative";
+    terrPlanets.style.opacity = 0 + "%";
+    gasGiants.style.opacity = 0 + "%";
+    iceGiants.style.opacity = 0 + "%";
+    // terrPlanets.style.display = "none";
+    // gasGiants.style.display = "none";
+    // iceGiants.style.display = "none";
+  }
   console.log(scroll);
 });
 
@@ -180,6 +194,34 @@ const orbitPlanetsAroundSun = (rotationScroll) => {
   saturnParent.rotation.y = ((rotationScroll * 3) / 2) * Math.PI;
   uranusParent.rotation.y = ((rotationScroll * 2) / 2) * Math.PI;
   neptuneParent.rotation.y = ((rotationScroll * 1) / 2) * Math.PI;
+};
+
+terrPlanets.onmouseover = () => {
+  gasGiants.style.visibility = "hidden";
+  iceGiants.style.visibility = "hidden";
+};
+
+terrPlanets.onmouseleave = () => {
+  gasGiants.style.visibility = "visible";
+  iceGiants.style.visibility = "visible";
+};
+gasGiants.onmouseover = () => {
+  terrPlanets.style.visibility = "hidden";
+  iceGiants.style.visibility = "hidden";
+};
+
+gasGiants.onmouseleave = () => {
+  terrPlanets.style.visibility = "visible";
+  iceGiants.style.visibility = "visible";
+};
+iceGiants.onmouseover = () => {
+  gasGiants.style.visibility = "hidden";
+  terrPlanets.style.visibility = "hidden";
+};
+
+iceGiants.onmouseleave = () => {
+  gasGiants.style.visibility = "visible";
+  terrPlanets.style.visibility = "visible";
 };
 
 // const axesHelper = new THREE.AxesHelper(200, 200);
